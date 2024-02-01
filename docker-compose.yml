@@ -17,7 +17,7 @@ services:
             - "3307:3306"
         environment:
             - MYSQL_DATABASE=hive
-            - MYSQL_ROOT_PASSWORD=root            
+            - MYSQL_ROOT_PASSWORD=php_project            
             - MYSQL_USER=hiveuser
             - MYSQL_PASSWORD=hivepassword
         volumes:
@@ -30,7 +30,7 @@ services:
         environment:
             PMA_HOST: database
             PMA_USER: root
-            PMA_PASSWORD: root
+            PMA_PASSWORD: php_project
         depends_on:
             - database
 
