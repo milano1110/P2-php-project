@@ -42,6 +42,14 @@ services:
         volumes:
             - jenkins-data:/var/jenkins_home
 
+    sonarqube:
+        image: sonarqube:latest
+        ports:
+            - "9000:9000"
+        volumes:
+            - sonarqube-data:/opt/sonarqube/data
+
 volumes:
     db-data:
     jenkins-data:
+    sonarqube-data:
