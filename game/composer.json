@@ -1,0 +1,16 @@
+{
+    "name": "milano1110/game",
+    "description": "Php hive game project",
+    "autoload": {
+        "psr-4": {
+            "Milano1110\\Game\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "milano1110",
+            "email": "milanschuringa@gmail.com"
+        }
+    ],
+    "require": {}
+}
