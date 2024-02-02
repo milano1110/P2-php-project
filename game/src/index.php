@@ -1,27 +1,36 @@
 <?php
 session_start();
 
-include_once 'util.php';
+require_once 'vender/autoload.php';
+
+use Milano1110\Game\Board;
+use Milano1110\Game\Database;
 
 if (!isset($_SESSION['board'])) {
     header('Location: restart.php');
     exit(0);
 }
-$board = $_SESSION['board'];
+
+$board = new Board($_SESSION['board']);
 $player = $_SESSION['player'];
 $hand = $_SESSION['hand'];
 
 $to = [];
-foreach ($GLOBALS['OFFSETS'] as $pq) {
-    foreach (array_keys($board) as $pos) {
+foreach ($board->getOffsets() as $pq) {
+    foreach ($board->getKeys() as $pos) {
         $pq2 = explode(',', $pos);
         $to[] = ($pq[0] + $pq2[0]) . ',' . ($pq[1] + $pq2[1]);
     }
 }
+
 $to = array_unique($to);
-if (!count($to)) {
+if (empty($to)) {
     $to[] = '0,0';
 }
+
+echo 'board: ';
+var_dump($board->board);
+
 ?>
 <!DOCTYPE html>
 <html lang="EN" xml:lang="en">
@@ -82,7 +91,7 @@ if (!count($to)) {
         <?php
         $min_p = 1000;
         $min_q = 1000;
-        foreach ($board as $pos => $tile) {
+        foreach ($board->getBoard() as $pos => $tile) {
             $pq = explode(',', $pos);
             if ($pq[0] < $min_p) {
                 $min_p = $pq[0];
@@ -91,7 +100,7 @@ if (!count($to)) {
                 $min_q = $pq[1];
             }
         }
-        foreach (array_filter($board) as $pos => $tile) {
+        foreach ($board->getNonEmptyTiles() as $pos => $tile) {
             $pq = explode(',', $pos);
             $pq[0];
             $pq[1];
@@ -159,7 +168,7 @@ if (!count($to)) {
     <form method="post" action="move.php">
         <select name="from">
             <?php
-            foreach (array_keys($board) as $pos) {
+            foreach ($board->getKeys() as $pos) {
                 echo "<option value=\"$pos\">$pos</option>";
             }
             ?>
@@ -186,10 +195,7 @@ if (!count($to)) {
             } ?></strong>
     <ol>
         <?php
-        $db = include_once 'database.php';
-        $stmt = $db->prepare('SELECT * FROM moves WHERE game_id = ' . $_SESSION['game_id']);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $result = Database::getMoves($_SESSION['game_id']);
         while ($row = $result->fetch_array()) {
             echo '<li>' . $row[2] . ' ' . $row[3] . ' ' . $row[4] . '</li>';
         }
