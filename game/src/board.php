@@ -73,15 +73,13 @@ class Board
         $a = explode(',', $a);
         $b = explode(',', $b);
 
-        if (($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) || ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1)) {
+        if (
+            $a[0] == $b[0] && abs($a[1] - $b[1]) == 1 ||
+            $a[1] == $b[1] && abs($a[0] - $b[0]) == 1 ||
+            $a[0] + $a[1] == $b[0] + $b[1]
+        ) {
             return true;
         }
-
-        if ($a[0] + $a[1] == $b[0] + $b[1]) {
-            return true;
-        }
-
-        return false;
     }
 
     public function hasNeighbour($a)
@@ -140,8 +138,10 @@ class Board
         }
 
         if (
-            count($common) < 2 || !$this->board[$common[0]] && !$this->board[$common[1]]
-            && !$this->board[$from] && !$this->board[$to]
+            !$this->board[$common[0]] &&
+            !$this->board[$common[1]] &&
+            !$this->board[$from] &&
+            !$this->board[$to]
         ) {
             return false;
         }

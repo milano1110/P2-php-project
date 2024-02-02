@@ -2,7 +2,6 @@
 
 namespace Milano1110\Game;
 
-use Milano1110\Game\Board;
 use mysqli;
 
 class Database
@@ -47,7 +46,7 @@ class Database
     public static function pass($gameId, $lastMove, $state)
     {
         $db = self::connect();
-        $stmt = $db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state) 
+        $stmt = $db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state)
         VALUES (?, "pass", NULL, NULL, ?, ?)');
 
         $stmt->bind_param('iis', $gameId, $lastMove, $state);
@@ -58,7 +57,7 @@ class Database
     public static function play($gameId, $piece, $to, $lastMove, $state)
     {
         $db = self::connect();
-        $stmt = $db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state) 
+        $stmt = $db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state)
         VALUES (?, "play", ?, ?, ?, ?)');
 
         $stmt->bind_param('issis', $gameId, $piece, $to, $lastMove, $state);

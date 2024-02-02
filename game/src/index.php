@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once 'vender/autoload.php';
+require_once './vendor/autoload.php';
 
 use Milano1110\Game\Board;
 use Milano1110\Game\Database;
@@ -152,7 +152,9 @@ var_dump($board->board);
         <select name="piece">
             <?php
             foreach ($hand[$player] as $tile => $ct) {
-                echo "<option value=\"$tile\">$tile</option>";
+                if ($ct > 0) {
+                    echo "<option value=\"$tile\">$tile</option>";
+                }
             }
             ?>
         </select>
