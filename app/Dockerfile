@@ -17,6 +17,6 @@ COPY --from=composer /app/vendor /var/www/html/vendor
 
 COPY ./src /var/www/html
 
-COPY .env /var/www/html/
+COPY .env /var/www/html
 
 EXPOSE 80
