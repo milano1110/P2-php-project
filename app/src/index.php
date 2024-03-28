@@ -1,13 +1,20 @@
 <?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+require_once __DIR__ . '/Entity/database.php';
+require_once __DIR__ . '/Game/board.php';
+
+use App\Game\Board;
+use App\Entity\Database;
+
 session_start();
 
-require_once './vendor/autoload.php';
-
-use Milano1110\Game\Board;
-use Milano1110\Game\Database;
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 if (!isset($_SESSION['board'])) {
-    header('Location: restart.php');
+    header('Location: Game/restart.php');
     exit(0);
 }
 
@@ -148,7 +155,7 @@ var_dump($board->board);
                 }
                 ?>
     </div>
-    <form method="post" action="play.php">
+    <form method="post" action="Game/play.php">
         <select name="piece">
             <?php
             foreach ($hand[$player] as $tile => $ct) {
@@ -167,7 +174,7 @@ var_dump($board->board);
         </select>
         <input type="submit" value="Play">
     </form>
-    <form method="post" action="move.php">
+    <form method="post" action="Game/move.php">
         <select name="from">
             <?php
             foreach ($board->getKeys() as $pos) {
@@ -184,7 +191,7 @@ var_dump($board->board);
         </select>
         <input type="submit" value="Move">
     </form>
-    <form method="post" action="pass.php">
+    <form method="post" action="Game/pass.php">
         <input type="submit" value="Pass">
     </form>
     <form method="post" action="restart.php">
@@ -203,7 +210,7 @@ var_dump($board->board);
         }
         ?>
     </ol>
-    <form method="post" action="undo.php">
+    <form method="post" action="Game/undo.php">
         <input type="submit" value="Undo">
     </form>
 </body>

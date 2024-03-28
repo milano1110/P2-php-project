@@ -1,10 +1,16 @@
 <?php
 
-namespace Milano1110\Game;
+namespace App\Game;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+require_once __DIR__ . '/../Entity/database.php';
+
+use App\Entity\Database;
 
 class Board
 {
-    private static $OFFSETS = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
+    private static $offsets = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
     public array $board;
 
     public function __construct(array $board)
@@ -14,7 +20,7 @@ class Board
 
     public static function getOffsets()
     {
-        return self::$OFFSETS;
+        return self::$offsets;
     }
 
     public function getBoard()
@@ -129,7 +135,7 @@ class Board
 
         $b = explode(',', $to);
         $common = [];
-        foreach (self::$OFFSETS as $pq) {
+        foreach (self::$offsets as $pq) {
             $p = $b[0] + $pq[0];
             $q = $b[1] + $pq[1];
             if ($this->isNeighbour($from, $p . "," . $q)) {

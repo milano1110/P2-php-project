@@ -1,11 +1,17 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+require_once __DIR__ . '/../Entity/database.php';
+require_once __DIR__ . '/board.php';
+
+use App\Game\Board;
+use App\Entity\Database;
+
 session_start();
 
-require_once './vendor/autoload.php';
-
-use Milano1110\Game\Board;
-use Milano1110\Game\Database;
+$dotenv = Dotenv\Dotenv::createImmutable("../");
+$dotenv->load();
 
 $from = $_POST['from'];
 $to = $_POST['to'];
@@ -73,5 +79,5 @@ if (!$board->isOccupied($from)) {
     $_SESSION['board'] = $board->getBoard();
 }
 
-header('Location: index.php');
+header('Location: ../index.php');
 exit();

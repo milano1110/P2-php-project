@@ -1,6 +1,6 @@
 <?php
 
-namespace Milano1110\Game;
+namespace App\Entity;
 
 use mysqli;
 
@@ -11,17 +11,18 @@ class Database
     private static function connect()
     {
         if (self::$connection === null) {
-            $host = getenv('HOST') ?: 'database';
-            $user = getenv('USER') ?: 'hiveuser';
-            $password = getenv('PASSWORD') ?: 'hivepassword';
-            $dbName = getenv('NAME') ?: 'hive';
+            $host = $_ENV['DB_HOST'];
+            $username = $_ENV['DB_USER'];
+            $password = $_ENV['DB_PASSWORD'];
+            $database = $_ENV['DB_NAME'];
 
-            self::$connection = new mysqli($host, $user, $password, $dbName);
+            self::$connection = new mysqli($host, $username, $password, $database);
 
             if (self::$connection->connect_error) {
                 die("Connection failed: " . self::$connection->connect_error);
             }
         }
+
         return self::$connection;
     }
 

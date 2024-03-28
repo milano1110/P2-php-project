@@ -1,10 +1,15 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+require_once __DIR__ . '/../Entity/database.php';
+
+use App\Entity\Database;
+
 session_start();
 
-require_once './vendor/autoload.php';
-
-use Milano1110\Game\Database;
+$dotenv = Dotenv\Dotenv::createImmutable("../");
+$dotenv->load();
 
 $_SESSION['board'] = [];
 $_SESSION['hand'] = [
@@ -16,4 +21,4 @@ $_SESSION['player'] = 0;
 $insertId = Database::restart();
 $_SESSION['game_id'] = $insertId;
 
-header('Location: index.php');
+header('Location: ../index.php');
