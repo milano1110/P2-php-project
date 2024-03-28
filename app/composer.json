@@ -1,0 +1,17 @@
+{
+    "name": "milano1110/p2_php_project",
+    "description": "Php hive game project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.3",
+        "ext-mysqli": "*",
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
