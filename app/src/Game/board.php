@@ -74,6 +74,11 @@ class Board
         return false;
     }
 
+    public function isOccupied(string $position): bool
+    {
+        return isset($this->board[$position]);
+    }
+
     public function isNeighbour($a, $b)
     {
         $a = explode(',', $a);
@@ -110,11 +115,6 @@ class Board
             }
         }
         return true;
-    }
-
-    public function isOccupied(string $position): bool
-    {
-        return isset($this->board[$position]);
     }
 
     public function len($tile)

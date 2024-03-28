@@ -44,7 +44,7 @@ services:
             - jenkins-data:/var/jenkins_home
 
     sonarqube:
-        image: sonarqube:lts
+        image: sonarqube:latest
         ports:
             - "9000:9000"
         volumes:
