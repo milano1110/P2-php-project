@@ -138,9 +138,9 @@ class Logic
             }
             $tile = $board->popTile($from);
             $player_pieces = array_keys($player->getHand()->getAvailablePieces());
-            if (count($player_pieces) != 4 && !isset($player_pieces["Q"])) {
-                $this->doesHiveSplit($to);
-            }
+            // if (count($player_pieces) != 4 && !isset($player_pieces["Q"])) {
+            //     $this->doesHiveSplit($to);
+            // }
             if ($from == $to) {
                 throw new Exception("Tile must move");
             } elseif ($board->isOccupied($to) && $tile[1] != "B") {
@@ -175,6 +175,19 @@ class Logic
         Board::setState($db_last_move['state']);
 
         return $db_last_move['previous_id'];
+    }
+
+    public function pass(Player $player)
+    {
+        $pieces = $player->getHand()->getAvailablePieces();
+        if (!empty($pieces)) {
+            $valid_play = $this->getValidPositionsPlay($player);
+        }
+        $valid_moves = $this->getValidPositionsMove($player);
+        if (!empty($valid_play) || !empty($valid_moves)) {
+            throw new Exception("You can still play or move");
+        }
+        return true;
     }
 
     public static function createGameFromSession(array $session): array

@@ -77,4 +77,27 @@ class LogicTest extends TestCase
         $this->expectExceptionMessage('Must play queen bee');
         $logic->play($player, 'B', '0,-3');
     }
+
+    public function testPass()
+    {
+        $board = new Board([
+            '0,0' => [[0, 'Q'], '0,1' => [1, 'Q']]
+        ]);
+        $hand = new Hand(["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0]);
+        $player = new Player(0, $hand, $board);
+        $logic = new Logic($board);
+        $this->assertTrue($logic->pass($player));
+    }
+
+    public function testPassException()
+    {
+        $board = new Board([
+            "0,0" => [[0, "Q"]]
+        ]);
+        $hand = new Hand();
+        $player = new Player(1, $hand, $board);
+        $logic = new Logic($board);
+        $this->expectException(Exception::class);
+        $logic->pass($player);
+    }
 }

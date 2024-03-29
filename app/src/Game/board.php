@@ -55,11 +55,6 @@ class Board
         return array_keys($this->board);
     }
 
-    public function popTile(string $position): array
-    {
-        return array_pop($this->board[$position]);
-    }
-
     public function getNonEmptyTiles()
     {
         return array_filter($this->board, function ($tileStack) {
@@ -116,6 +111,31 @@ class Board
             }
         }
         return true;
+    }
+
+    public function getTiles(Player $player)
+    {
+        $tiles = array_filter($this->board, function ($tileStack) use ($player) {
+            return is_array($tileStack) && isset($tileStack[0]) && is_array($tileStack[0]) && $tileStack[0][0] == $player->getPlayer();
+        });
+        return array_keys($tiles);
+    }
+
+    public function getPieces(Player $player)
+    {
+        $tiles = $this->getTiles($player);
+        $pieces = [];
+        foreach ($tiles as $tile) {
+            $topTile = end($this->board[$tile]);
+            $piece = $topTile[1];
+            $pieces[] = $piece;
+        }
+        return $pieces;
+    }
+
+    public function popTile(string $position): array
+    {
+        return array_pop($this->board[$position]);
     }
 
     public function pushTile(string $position, string $piece, int $player)
