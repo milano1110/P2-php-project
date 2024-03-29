@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Install Dependencies') {
             steps {
-                
+                echo 'install';
             }
         }
         stage('SonarQube') {
@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-            
+                echo 'test';
             }
         }
     }
