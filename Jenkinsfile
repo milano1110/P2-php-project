@@ -1,6 +1,12 @@
 pipeline {
     agent any
     stages {
+        stage('Install Dependencies') {
+            steps {
+                sh 'composer install --ignore-platform-reqs'
+                stash name: 'vendor', includes: 'vendor/**'
+            }
+        }
         stage('SonarQube') {
             steps {
                 script {
@@ -18,7 +24,17 @@ pipeline {
                 }
             }
             steps {
+                unstash name: 'vendor'
                 sh 'app/vendor/bin/phpunit'
+                xunit([
+                    thresholds: [
+                        failed ( failureThreshold: "0" ),
+                        skipped ( unstableThreshold: "0" )
+                    ],
+                    tools: [
+                        PHPUnit(pattern: 'build/logs/junit.xml', stopProcessingIfError: true, failIfNotNew: true)
+                    ]
+                ])
             }
         }
     }
