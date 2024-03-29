@@ -3,10 +3,17 @@
 namespace App\Entity;
 
 use mysqli;
+use Dotenv\Dotenv;
 
 class Database
 {
     private static $connection = null;
+
+    private function __construct()
+    {
+        // $dotenv = Dotenv::createImmutable("../");
+        // $dotenv->load();
+    }
 
     private static function connect()
     {
