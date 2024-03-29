@@ -3,7 +3,9 @@ pipeline {
     stages {
         stage('Install Dependencies') {
             steps {
-                echo 'install';
+                sh 'curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer'
+                sh 'composer install --ignore-platform-reqs'
+                stash name: 'vendor', includes: 'vendor/**'
             }
         }
         stage('SonarQube') {
@@ -17,8 +19,23 @@ pipeline {
             }
         }
         stage('Test') {
+            agent {
+                docker {
+                    image 'php:8.3-cli'
+                }
+            }
             steps {
-                echo 'test';
+                unstash name: 'vendor'
+                sh 'app/vendor/bin/phpunit'
+                xunit([
+                    thresholds: [
+                        failed ( failureThreshold: "0" ),
+                        skipped ( unstableThreshold: "0" )
+                    ],
+                    tools: [
+                        PHPUnit(pattern: 'build/logs/junit.xml', stopProcessingIfError: true, failIfNotNew: true)
+                    ]
+                ])
             }
         }
     }
