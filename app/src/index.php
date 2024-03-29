@@ -3,9 +3,10 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 require_once __DIR__ . '/Entity/database.php';
-require_once __DIR__ . '/Game/board.php';
+require_once __DIR__ . '/Game/logic.php';
 
-use App\Game\Board;
+
+use App\Game\Logic;
 use App\Entity\Database;
 
 session_start();
@@ -18,25 +19,14 @@ if (!isset($_SESSION['board'])) {
     exit(0);
 }
 
-$board = new Board($_SESSION['board']);
-$player = $_SESSION['player'];
-$hand = $_SESSION['hand'];
-
-$to = [];
-foreach ($board->getOffsets() as $pq) {
-    foreach ($board->getKeys() as $pos) {
-        $pq2 = explode(',', $pos);
-        $to[] = ($pq[0] + $pq2[0]) . ',' . ($pq[1] + $pq2[1]);
-    }
-}
-
-$to = array_unique($to);
+$gameId = $_SESSION['game_id'];
+[$board, $players] = Logic::createGameFromSession($_SESSION);
+$currentPlayer = $players[$_SESSION['player']];
+$playerPieces = $currentPlayer->getHand()->getAvailablePieces();
+$to = $currentPlayer->getValidPositions();
 if (empty($to)) {
     $to[] = '0,0';
 }
-
-echo 'board: ';
-var_dump($board->board);
 
 ?>
 <!DOCTYPE html>
@@ -130,7 +120,7 @@ var_dump($board->board);
     <div class="hand">
         White:
         <?php
-        foreach ($hand[0] as $tile => $ct) {
+        foreach ($players[0]->getHand()->getHandArray() as $tile => $ct) {
             for ($i = 0; $i < $ct; $i++) {
                 echo '<div class="tile player0"><span>' . $tile . "</span></div> ";
             }
@@ -140,7 +130,7 @@ var_dump($board->board);
     <div class="hand">
         Black:
         <?php
-        foreach ($hand[1] as $tile => $ct) {
+        foreach ($players[1]->getHand()->getHandArray() as $tile => $ct) {
             for ($i = 0; $i < $ct; $i++) {
                 echo '<div class="tile player1"><span>' . $tile . "</span></div> ";
             }
@@ -148,7 +138,7 @@ var_dump($board->board);
         ?>
     </div>
     <div class="turn">
-        Turn: <?php if ($player == 0) {
+        Turn: <?php if ($currentPlayer->getPlayer() == 0) {
                     echo "White";
                 } else {
                     echo "Black";
@@ -158,7 +148,7 @@ var_dump($board->board);
     <form method="post" action="Game/play.php">
         <select name="piece">
             <?php
-            foreach ($hand[$player] as $tile => $ct) {
+            foreach ($playerPieces as $tile => $ct) {
                 if ($ct > 0) {
                     echo "<option value=\"$tile\">$tile</option>";
                 }
@@ -177,7 +167,7 @@ var_dump($board->board);
     <form method="post" action="Game/move.php">
         <select name="from">
             <?php
-            foreach ($board->getKeys() as $pos) {
+            foreach ($currentPlayer->getPlayerTiles() as $pos) {
                 echo "<option value=\"$pos\">$pos</option>";
             }
             ?>
@@ -194,7 +184,7 @@ var_dump($board->board);
     <form method="post" action="Game/pass.php">
         <input type="submit" value="Pass">
     </form>
-    <form method="post" action="restart.php">
+    <form method="post" action="Game/restart.php">
         <input type="submit" value="Restart">
     </form>
     <strong><?php if (isset($_SESSION['error'])) {
@@ -204,7 +194,7 @@ var_dump($board->board);
             } ?></strong>
     <ol>
         <?php
-        $result = Database::getMoves($_SESSION['game_id']);
+        $result = Database::getMoves($gameId);
         while ($row = $result->fetch_array()) {
             echo '<li>' . $row[2] . ' ' . $row[3] . ' ' . $row[4] . '</li>';
         }

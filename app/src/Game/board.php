@@ -5,8 +5,12 @@ namespace App\Game;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once __DIR__ . '/../Entity/database.php';
+require_once __DIR__ . '/hand.php';
+require_once __DIR__ . '/player.php';
 
 use App\Entity\Database;
+use App\Game\Hand;
+use App\Game\Player;
 
 class Board
 {
@@ -70,7 +74,6 @@ class Board
         if (isset($this->board[$from]) && count($this->board[$from]) > 0) {
             return $this->board[$from][count($this->board[$from]) - 1][0] == $player;
         }
-
         return false;
     }
 
@@ -117,14 +120,19 @@ class Board
         return true;
     }
 
-    public function len($tile)
-    {
-        return $tile ? count($tile) : 0;
-    }
-
     public function pushTile(string $position, string $piece, int $player)
     {
         array_push($this->board[$position], array($player, $piece));
+    }
+
+    public function setTile(string $position, string $tile, int $player)
+    {
+        $this->board[$position] = [[$player, $tile]];
+    }
+
+    public function len($tile)
+    {
+        return $tile ? count($tile) : 0;
     }
 
     public function slide($from, $to)

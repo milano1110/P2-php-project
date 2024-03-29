@@ -7,6 +7,8 @@ require_once __DIR__ . '/board.php';
 
 use App\Game\Board;
 use App\Entity\Database;
+use App\Game\Logic;
+use App\Game\Player;
 
 session_start();
 
@@ -16,30 +18,29 @@ $dotenv->load();
 $piece = $_POST['piece'];
 $to = $_POST['to'];
 
-$player = $_SESSION['player'];
-$board = new Board($_SESSION['board']);
-$hand = $_SESSION['hand'][$player];
+$gameId = $_SESSION['game_id'];
+$hands = $_SESSION['hand'];
+$lastMove = $_SESSION['last_move'] ?? null;
 
-if (!$hand[$piece]) {
-    $_SESSION['error'] = "Player does not have tile";
-} elseif ($board->isOccupied($to)) {
-    $_SESSION['error'] = 'Board position is not empty';
-} elseif (!$board->isEmpty() && !$board->hasNeighbour($to)) {
-    $_SESSION['error'] = "board position has no neighbour";
-} elseif (array_sum($hand) < 11 && !$board->neighboursAreSameColor($player, $to)) {
-    $_SESSION['error'] = "Board position has opposing neighbour";
-} elseif (array_sum($hand) <= 8 && $hand['Q']) { {
-        $_SESSION['error'] = 'Must play queen bee';
-    }
-} else {
-    $_SESSION['board'][$to] = [[$_SESSION['player'], $piece]];
-    $_SESSION['hand'][$player][$piece]--;
-    $_SESSION['player'] = 1 - $_SESSION['player'];
-    $_SESSION['last_move'] = isset($_SESSION['last_move']) ? $_SESSION['last_move'] : null;
+[$board, $players] = Logic::createGameFromSession($_SESSION);
+$currentPlayer = $players[$_SESSION['player']];
 
-    $insertId = Database::play($_SESSION['game_id'], $piece, $to, $_SESSION['last_move'], Board::getState());
+try {
+    $logic = new Logic($board);
+    $logic->play($currentPlayer, $piece, $to);
+
+    $board->setTile($to, $piece, $currentPlayer->getPlayer());
+
+    $currentPlayer->getHand()->removePiece($piece);
+
+    $insertId = Database::play($gameId, $piece, $to, $lastMove, Board::getState());
+
+    $_SESSION['player'] = Player::getOpponent($currentPlayer);
+    $_SESSION['board'] = $board->getBoard();
+    $_SESSION['hand'] = [$players[0]->getHand()->getHandArray(), $players[1]->getHand()->getHandArray()];
     $_SESSION['last_move'] = $insertId;
+} catch (Exception $e) {
+    $_SESSION['error'] = $e->getMessage();
 }
 
 header('Location: ../index.php');
-exit();
