@@ -5,7 +5,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../Entity/database.php';
 require_once __DIR__ . '/board.php';
 require_once __DIR__ . '/logic.php';
-require_once __DIR__ . '/hand.php';
 require_once __DIR__ . '/player.php';
 
 use App\Game\Board;

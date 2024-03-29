@@ -3,7 +3,7 @@
     "description": "Php hive game project",
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "./"
         }
     },
     "require": {

@@ -5,7 +5,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Entity/database.php';
 require_once __DIR__ . '/Game/logic.php';
 
-
 use App\Game\Logic;
 use App\Entity\Database;
 
