@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'composer:latest'
+            args '-u root:root'
+        }
+    }
     stages {
         stage('SonarQube') {
             steps {
@@ -18,21 +23,8 @@ pipeline {
         // }
         stage('Test') {
             steps {
-                unstash 'vendor'
+                sh 'composer install'
                 sh 'vendor/bin/phpunit'
-                xunit(
-                    thresholds: [
-                        failed(failureThreshold: '0'),
-                        skipped(unstableThreshold: '0')
-                    ],
-                    tools: [
-                        PHPUnit(
-                            pattern: 'build/logs/junit.xml',
-                            stopProcessingIfError: true,
-                            failIfNotNew: true
-                        )
-                    ]
-                )
             }
         }
     }
