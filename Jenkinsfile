@@ -11,11 +11,11 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
-            steps {
-                sh 'docker-compose up --build'
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         sh 'docker-compose up --build'
+        //     }
+        // }
         stage('Test') {
             steps {
                 sh 'app\\vendor\\bin\\phpunit'
