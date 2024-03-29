@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/../src/Game/Player.php';
+require_once __DIR__ . '/../src/Game/Hand.php';
+require_once __DIR__ . '/../src/Game/Board.php';
+
 use PHPUnit\Framework\TestCase;
 use App\Game\Player;
 use App\Game\Hand;
