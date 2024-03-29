@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'composer:latest'
-            args '-u root:root'
-        }
-    }
+    agent any
     stages {
         stage('SonarQube') {
             steps {
@@ -16,15 +11,14 @@ pipeline {
                 }
             }
         }
-        // stage('Build') {
-        //     steps {
-        //         sh 'docker-compose up --build'
-        //     }
-        // }
         stage('Test') {
+            agent {
+                docker {
+                    image 'php:8.3-cli'
+                }
+            }
             steps {
-                sh 'composer install'
-                sh 'vendor/bin/phpunit'
+                sh 'app/vendor/bin/phpunit'
             }
         }
     }
