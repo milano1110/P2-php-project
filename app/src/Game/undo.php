@@ -1,13 +1,25 @@
-S<?php
+<?php
 
-    session_start();
+require_once __DIR__ . '/../vendor/autoload.php';
 
-    $db = include 'database.php';
-    $stmt = $db->prepare('SELECT * FROM moves WHERE id = ' . $_SESSION['last_move']);
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_array();
-    $_SESSION['last_move'] = $result[5];
-    set_state($result[6]);
-    header('Location: index.php');
+require_once __DIR__ . '/../Game/logic.php';
 
-    ?>
+use App\Game\Logic;
+
+session_start();
+
+$dotenv = Dotenv\Dotenv::createImmutable("../");
+$dotenv->load();
+
+$last_move = $_SESSION['last_move'];
+[$board, $players] = Logic::createGameFromSession($_SESSION);
+
+try {
+    $logic = new Logic($board);
+    $previousId = $logic->undo($last_move);
+    $_SESSION['last_move'] = $previousId;
+} catch (Exception $e) {
+    $_SESSION['error'] = $e->getMessage();
+}
+
+header('Location: ../index.php');

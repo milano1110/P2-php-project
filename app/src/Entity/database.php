@@ -80,4 +80,22 @@ class Database
         $stmt->execute();
         return $stmt->get_result();
     }
+
+    public static function getMove($moveId)
+    {
+        $db = Database::connect();
+        $stmt = $db->prepare('SELECT * FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $moveId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public static function deleteMove($moveId)
+    {
+        $db = Database::connect();
+        $stmt = $db->prepare('DELETE FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $moveId);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
 }

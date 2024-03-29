@@ -3,10 +3,12 @@
 namespace App\Game;
 
 require_once __DIR__ . '/board.php';
+require_once __DIR__ . '/../Entity/database.php';
 
 use Exception;
 
 use App\Game\Board;
+use App\Entity\Database;
 
 class Logic
 {
@@ -40,8 +42,9 @@ class Logic
         }
     }
 
-    public function move(Player $player, $to, $from, $board)
+    public function move(Player $player, $to, $from)
     {
+        $board = $this->board;
         $tile = null;
         try {
             if (!$board->isOccupied($from)) {
@@ -94,6 +97,20 @@ class Logic
             throw $e;
         }
         return $tile;
+    }
+
+    public function undo($last_move)
+    {
+        if (empty($this->board->getBoard())) {
+            throw new Exception("No moves to undo");
+        }
+
+        $db_last_move = Database::getMove($last_move);
+        Database::deleteMove($db_last_move['id']);
+
+        Board::setState($db_last_move['state']);
+
+        return $db_last_move['previous_id'];
     }
 
     public static function createGameFromSession(array $session): array
