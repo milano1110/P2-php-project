@@ -18,11 +18,21 @@ pipeline {
         // }
         stage('Test') {
             steps {
-                sh 'curl -sS https://getcomposer.org/installer | php'
-                withEnv(["PATH+COMPOSER=${WORKSPACE}"]) {
-                    sh 'composer install'
-                    sh 'app/vendor/bin/phpunit'
-                }
+                unstash 'vendor'
+                sh 'vendor/bin/phpunit'
+                xunit(
+                    thresholds: [
+                        failed(failureThreshold: '0'),
+                        skipped(unstableThreshold: '0')
+                    ],
+                    tools: [
+                        PHPUnit(
+                            pattern: 'build/logs/junit.xml',
+                            stopProcessingIfError: true,
+                            failIfNotNew: true
+                        )
+                    ]
+                )
             }
         }
     }
