@@ -18,8 +18,11 @@ pipeline {
         // }
         stage('Test') {
             steps {
-                sh 'composer install'
-                sh 'app/vendor/bin/phpunit'
+                sh 'curl -sS https://getcomposer.org/installer | php'
+                withEnv(["PATH+COMPOSER=${WORKSPACE}"]) {
+                    sh 'composer install'
+                    sh 'app/vendor/bin/phpunit'
+                }
             }
         }
     }
